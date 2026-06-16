@@ -20,7 +20,5 @@ go get gorm.io/driver/postgres <!-- ues -->
 go get github.com/golang-jwt/jwt/v5 <!-- ues -->
 go get github.com/google/uuid <!-- ues -->
 
-<!-- all install code -->
-
 go mod tidy
 ```

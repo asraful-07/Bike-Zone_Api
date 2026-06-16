@@ -8,7 +8,7 @@ import (
 )
 
 type Config struct {
-	DSN  string `env:"DSN" envDefault:"host=localhost user=postgres password=rahat12 dbname=tickets port=9920 sslmode=disable TimeZone=Asia/Shanghai"`
+	DSN  string `env:"DSN" envDefault:"host=localhost user=postgres password=rahat12 dbname=bike port=9920 sslmode=disable TimeZone=Asia/Shanghai"`
 	PORT string `env:"PORT" envDefault:"8080"`
 	JWTSecretKey string `env:"	JWT_SECRET_KEY" envDefault:"Sy9frXLrOngAQXcMiuF7yAfmNTUgziBH"`
 }

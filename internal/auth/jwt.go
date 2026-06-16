@@ -6,49 +6,47 @@ import (
 	"github.com/golang-jwt/jwt/v5"
 )
 
-const (
-	jwtSecretKey           = "Sy9frXLrOngAQXcMiuF7yAfmNTUgziBH"
-	defaultTokenExpiration = 24 * time.Hour // 7 days in hours
-)
+//  Removed hardcoded jwtSecretKey and defaultTokenDuration constants
+// — config should be the single source of truth
 
 type JWTClaims struct {
 	UserID uint   `json:"user_id"`
 	Name   string `json:"name"`
 	Email  string `json:"email"`
+	Role   string `json:"role"`
 	jwt.RegisteredClaims
 }
 
 type JWTService interface {
-	GenerateToken(userID uint, name, email string) (string, error)
+	GenerateToken(userID uint, name, email, role string) (string, error)
 	ValidateToken(tokenString string) (*JWTClaims, error)
 }
 
 type jwtService struct {
-	secretKey       string
+	secretKey     string
 	tokenDuration time.Duration
 }
 
 func NewJWTService(secretKey string, tokenDuration time.Duration) JWTService {
 	return &jwtService{
-		secretKey:       secretKey,
+		secretKey:     secretKey,
 		tokenDuration: tokenDuration,
 	}
 }
 
-func (s *jwtService) GenerateToken(userID uint, name, email string) (string, error) {
+func (s *jwtService) GenerateToken(userID uint, name, email, role string) (string, error) {
 	claims := &JWTClaims{
-		UserID: userID,	
+		UserID: userID,
 		Name:   name,
 		Email:  email,
-		RegisteredClaims: jwt.RegisteredClaims{	
+		Role:   role,
+		RegisteredClaims: jwt.RegisteredClaims{
 			ExpiresAt: jwt.NewNumericDate(time.Now().Add(s.tokenDuration)),
 			IssuedAt:  jwt.NewNumericDate(time.Now()),
 		},
 	}
-
-	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
-	return token.SignedString([]byte(s.secretKey))
-}	
+	return jwt.NewWithClaims(jwt.SigningMethodHS256, claims).SignedString([]byte(s.secretKey))
+}
 
 func (s *jwtService) ValidateToken(tokenString string) (*JWTClaims, error) {
 	token, err := jwt.ParseWithClaims(tokenString, &JWTClaims{}, func(token *jwt.Token) (interface{}, error) {
@@ -60,5 +58,5 @@ func (s *jwtService) ValidateToken(tokenString string) (*JWTClaims, error) {
 	if claims, ok := token.Claims.(*JWTClaims); ok && token.Valid {
 		return claims, nil
 	}
-	return nil, err
+	return nil, jwt.ErrTokenInvalidClaims
 }

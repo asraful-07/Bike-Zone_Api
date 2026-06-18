@@ -87,22 +87,38 @@ func (h *handler) LoginUser(c *echo.Context) error {
 }
 
 func (h *handler) GetMe(c *echo.Context) error {
-	userID, ok := c.Get("user_id").(uint)
-	if !ok {
+	// Safely obtain user_id which may be stored as different numeric types
+	var userID uint
+	switch v := c.Get("user_id").(type) {
+	case uint:
+		userID = v
+	case int:
+		userID = uint(v)
+	case int64:
+		userID = uint(v)
+	case float64:
+		userID = uint(v)
+	default:
 		return c.JSON(http.StatusUnauthorized, http_response.Error{
 			Code:    http.StatusUnauthorized,
 			Message: "Cannot get user information",
-			Details: "missing user id in context",
+			Details: "missing or invalid user id in context",
 		})
 	}
 
-	// Return all available claims from JWT context
+	// Read optional string claims safely to avoid panics when nil
+	name, _ := c.Get("user_name").(string)
+	email, _ := c.Get("user_email").(string)
+	role, _ := c.Get("user_role").(string)
+	phone, _ := c.Get("user_phone").(string)
+	createdAt, _ := c.Get("created_at").(string)
+
 	return c.JSON(http.StatusOK, dto.Response{
-		ID:    userID,
-		Name:  c.Get("user_name").(string),
-		Email: c.Get("user_email").(string),
-		Role:  c.Get("user_role").(string),
-		Phone: c.Get("user_phone").(string),
-		CreatedAt: c.Get("create_At").(string),
+		ID:        userID,
+		Name:      name,
+		Email:     email,
+		Role:      role,
+		Phone:     phone,
+		CreatedAt: createdAt,
 	})
 }

@@ -10,15 +10,17 @@ import (
 // — config should be the single source of truth
 
 type JWTClaims struct {
-	UserID uint   `json:"user_id"`
-	Name   string `json:"name"`
-	Email  string `json:"email"`
-	Role   string `json:"role"`
+	UserID    uint   `json:"user_id"`
+	Name      string `json:"name"`
+	Email     string `json:"email"`
+	Role      string `json:"role"`
+	Phone     string `json:"phone"`
+	CreatedAt string `json:"created_at"`
 	jwt.RegisteredClaims
 }
 
 type JWTService interface {
-	GenerateToken(userID uint, name, email, role string) (string, error)
+	GenerateToken(userID uint, name, email, role, phone, createdAt string) (string, error)
 	ValidateToken(tokenString string) (*JWTClaims, error)
 }
 
@@ -34,12 +36,14 @@ func NewJWTService(secretKey string, tokenDuration time.Duration) JWTService {
 	}
 }
 
-func (s *jwtService) GenerateToken(userID uint, name, email, role string) (string, error) {
+func (s *jwtService) GenerateToken(userID uint, name, email, role, phone, createdAt string) (string, error) {
 	claims := &JWTClaims{
-		UserID: userID,
-		Name:   name,
-		Email:  email,
-		Role:   role,
+		UserID:    userID,
+		Name:      name,
+		Email:     email,
+		Role:      role,
+		Phone:     phone,
+		CreatedAt: createdAt,
 		RegisteredClaims: jwt.RegisteredClaims{
 			ExpiresAt: jwt.NewNumericDate(time.Now().Add(s.tokenDuration)),
 			IssuedAt:  jwt.NewNumericDate(time.Now()),

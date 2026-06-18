@@ -63,7 +63,7 @@ func (s *service) LoginUser(req dto.LoginRequest) (*dto.Response, error) {
 		return nil, errors.New("invalid email or password")
 	}
 
-	token, err := s.jwtService.GenerateToken(user.ID, user.Name, user.Email, string(user.Role))
+	token, err := s.jwtService.GenerateToken(user.ID, user.Name, user.Email, string(user.Role), user.Phone, user.CreatedAt.String())
 	if err != nil {
 		return nil, err
 	}

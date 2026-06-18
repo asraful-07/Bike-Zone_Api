@@ -36,7 +36,8 @@ func AuthMiddleware(jwtService auth.JWTService) echo.MiddlewareFunc {
 			c.Set("user_email", claims.Email)
 			c.Set("user_name", claims.Name)
 			c.Set("user_role", claims.Role)
-
+            c.Set("user_phone", claims.Phone)
+            c.Set("created_at", claims.CreatedAt)
 			return next(c)
 		}
 	}

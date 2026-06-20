@@ -3,6 +3,7 @@ package server
 import (
 	"bike_zone_api/internal/config"
 	"bike_zone_api/internal/domain/users"
+	"bike_zone_api/internal/domain/vehicles"
 	"net/http"
 
 	"github.com/go-playground/validator/v10"
@@ -21,7 +22,7 @@ func (cv *CustomValidator) Validate(i interface{}) error {
 }
 
 func StartServer( db *gorm.DB, cfg *config.Config) {
-	if err := db.AutoMigrate(&users.User{}); err != nil {
+	if err := db.AutoMigrate(&users.User{}, &vehicles.Vehicle{}); err != nil {
 		panic("failed to migrate database")
 	}
 
@@ -37,7 +38,7 @@ func StartServer( db *gorm.DB, cfg *config.Config) {
 
     // All Routes
 	users.RegisterRoutes(e, db, cfg)
-
+	vehicles.RegisterRoutes(e, db)
 
 	if err := e.Start(":" + cfg.PORT); err != nil {
 		e.Logger.Error("failed to start server", "error", err)

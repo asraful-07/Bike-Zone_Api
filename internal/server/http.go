@@ -2,6 +2,7 @@ package server
 
 import (
 	"bike_zone_api/internal/config"
+	"bike_zone_api/internal/domain/bookings"
 	"bike_zone_api/internal/domain/users"
 	"bike_zone_api/internal/domain/vehicles"
 	"net/http"
@@ -22,7 +23,13 @@ func (cv *CustomValidator) Validate(i interface{}) error {
 }
 
 func StartServer( db *gorm.DB, cfg *config.Config) {
-	if err := db.AutoMigrate(&users.User{}, &vehicles.Vehicle{}); err != nil {
+	// Ensure fresh schema for development: drop and recreate tables
+	// NOTE: This will delete existing data in these tables.
+	if db.Migrator().HasTable(&users.User{}) || db.Migrator().HasTable(&vehicles.Vehicle{}) || db.Migrator().HasTable(&bookings.Booking{}) {
+		_ = db.Migrator().DropTable(&vehicles.Vehicle{}, &users.User{})
+	}
+
+	if err := db.AutoMigrate(&users.User{}, &vehicles.Vehicle{}, &bookings.Booking{}); err != nil {
 		panic("failed to migrate database")
 	}
 
@@ -39,6 +46,7 @@ func StartServer( db *gorm.DB, cfg *config.Config) {
     // All Routes
 	users.RegisterRoutes(e, db, cfg)
 	vehicles.RegisterRoutes(e, db)
+	bookings.RegisterRoutes(e, db, cfg)
 
 	if err := e.Start(":" + cfg.PORT); err != nil {
 		e.Logger.Error("failed to start server", "error", err)

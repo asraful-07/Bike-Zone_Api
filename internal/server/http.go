@@ -25,10 +25,6 @@ func (cv *CustomValidator) Validate(i interface{}) error {
 func StartServer( db *gorm.DB, cfg *config.Config) {
 	// Ensure fresh schema for development: drop and recreate tables
 	// NOTE: This will delete existing data in these tables.
-	if db.Migrator().HasTable(&users.User{}) || db.Migrator().HasTable(&vehicles.Vehicle{}) || db.Migrator().HasTable(&bookings.Booking{}) {
-		_ = db.Migrator().DropTable(&vehicles.Vehicle{}, &users.User{})
-	}
-
 	if err := db.AutoMigrate(&users.User{}, &vehicles.Vehicle{}, &bookings.Booking{}); err != nil {
 		panic("failed to migrate database")
 	}

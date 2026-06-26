@@ -4,6 +4,8 @@ A Go REST API for a mango shop. Supports user auth (JWT), mango inventory manage
 
 ---
 
+## Live link [https://bike-zone-api-1.onrender.com/]
+
 ## Table of Contents
 
 - [Prerequisites](#prerequisites)

@@ -1,6 +1,6 @@
-# haddiBangaAmm — Mango Shop REST API
+# Vehicle Zone API
 
-A Go REST API for a mango shop. Supports user auth (JWT), mango inventory management, and order placement. Uses Echo v5, GORM, and PostgreSQL (Neon).
+Vehicle Zone API is a RESTful API built with Go, Echo, and GORM. It provides endpoints for user authentication, vehicle management, and order processing. The API uses PostgreSQL as the database and supports JWT-based authentication.
 
 ---
 

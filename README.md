@@ -4,7 +4,7 @@ Vehicle Zone API is a RESTful API built with Go, Echo, and GORM. It provides end
 
 ---
 
-## Live link [https://bike-zone-api-1.onrender.com/]
+## Live link [https://bike-zone-api-1.onrender.com]
 
 ## Table of Contents
 
